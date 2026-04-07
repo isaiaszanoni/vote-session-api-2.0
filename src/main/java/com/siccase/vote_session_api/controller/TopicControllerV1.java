@@ -4,7 +4,7 @@ import com.siccase.vote_session_api.dto.request.StartSessionDTO;
 import com.siccase.vote_session_api.dto.request.TopicRequestDTO;
 import com.siccase.vote_session_api.dto.response.ResponseDTO;
 import com.siccase.vote_session_api.dto.response.SessionResponseDTO;
-import com.siccase.vote_session_api.dto.response.SessionResultDTO;
+import com.siccase.vote_session_api.dto.response.ResultResponseDTO;
 import com.siccase.vote_session_api.dto.response.TopicResponseDTO;
 import com.siccase.vote_session_api.service.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -48,9 +47,9 @@ public class TopicControllerV1 {
     }
 
     @GetMapping("/{topicId}/sessions/result")
-    @Operation(summary = "Calcula e retorna o resultado da votação")
-    public ResponseEntity<ResponseDTO> getSessionResult(@PathVariable(value = "topicId") UUID topicId) {
-        SessionResultDTO result = service.getSessionResult(topicId);
+    @Operation(summary = "Retorna o resultado da votação")
+    public ResponseEntity<ResponseDTO> getSessionResult(@PathVariable(value = "topicId") String topicId) {
+        ResultResponseDTO result = service.getSessionResultByTopicId(topicId);
         return ResponseEntity.ok(
                 new ResponseDTO(200, "Success", LocalDateTime.now(), result));
     }

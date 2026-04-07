@@ -2,6 +2,7 @@ package com.siccase.vote_session_api.controller;
 
 import com.siccase.vote_session_api.dto.response.ResponseDTO;
 import com.siccase.vote_session_api.exception.MemberAlreadyVoteException;
+import com.siccase.vote_session_api.exception.ResultNotFoundException;
 import com.siccase.vote_session_api.exception.SessionExpiredException;
 import com.siccase.vote_session_api.exception.SessionNotActiveException;
 import com.siccase.vote_session_api.exception.SessionNotFinishedException;
@@ -64,6 +65,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleMemberAlreadyVote(MemberAlreadyVoteException memberAlreadyVoteException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ResponseDTO(400, memberAlreadyVoteException.getMessage(), LocalDateTime.now(), null));
+    }
+
+    @ExceptionHandler(value = {ResultNotFoundException.class})
+    public ResponseEntity<?> handleResultNotFound(ResultNotFoundException resultNotFoundException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ResponseDTO(404, resultNotFoundException.getMessage(), LocalDateTime.now(), null));
     }
 
 }

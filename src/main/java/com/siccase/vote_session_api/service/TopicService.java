@@ -3,15 +3,19 @@ package com.siccase.vote_session_api.service;
 import com.siccase.vote_session_api.dto.request.StartSessionDTO;
 import com.siccase.vote_session_api.dto.request.TopicRequestDTO;
 import com.siccase.vote_session_api.dto.response.SessionResponseDTO;
-import com.siccase.vote_session_api.dto.response.SessionResultDTO;
+import com.siccase.vote_session_api.dto.response.ResultResponseDTO;
 import com.siccase.vote_session_api.dto.response.TopicResponseDTO;
 import com.siccase.vote_session_api.enums.DecisionOfTopicEnum;
 import com.siccase.vote_session_api.enums.ResponseOptionsEnum;
 import com.siccase.vote_session_api.enums.SessionStatusEnum;
+import com.siccase.vote_session_api.exception.ResultNotFoundException;
 import com.siccase.vote_session_api.exception.SessionNotFinishedException;
 import com.siccase.vote_session_api.exception.TopicNotFoundException;
+import com.siccase.vote_session_api.mapper.ResultMapper;
+import com.siccase.vote_session_api.model.Result;
 import com.siccase.vote_session_api.model.Topic;
 import com.siccase.vote_session_api.model.Vote;
+import com.siccase.vote_session_api.repository.ResultRepository;
 import com.siccase.vote_session_api.repository.TopicRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +33,8 @@ public class TopicService {
     private static final long DEFAULT_DURATION_SESSION_MINUTES = 1;
 
     private final TopicRepository repository;
+
+    private final ResultRepository resultRepository;
 
     private final VoteService voteService;
 
@@ -110,16 +116,46 @@ public class TopicService {
                 .orElseThrow(() ->  new TopicNotFoundException(id));
     }
 
-    public SessionResultDTO getSessionResult(UUID id) {
-        Topic topic = getTopicById(id);
+    public ResultResponseDTO getSessionResultByTopicId(String topicId) {
+        UUID topicUUID = UUID.fromString(topicId);
+        Result result = resultRepository.findByTopicId(topicUUID).orElseThrow(() -> new ResultNotFoundException(topicUUID));
+        return ResultMapper.INSTANCE.resultToResultResponseDTO( result );
+    }
 
-        validateTopicIsFinished(topic);
-
-        List<Vote> votes = voteService.getAllVotesByTopicId(id);
-        if (votes == null || votes.isEmpty()) {
-            return new SessionResultDTO();
+    public void validateTopicIsFinished(Topic topic) {
+        if (topic.getSessionStatus() != SessionStatusEnum.FINISHED) {
+            throw new SessionNotFinishedException("Topic " + topic.getId().toString() + " is not finished");
         }
 
+        if (topic.getFinishAt() == null) {
+            throw new IllegalStateException("Topic should have FinishedAt date to get result");
+        }
+    }
+
+    public void closeExpiredTopics() {
+        List<Topic> expiredTopics = repository.findBySessionStatusAndFinishAtBefore(
+                SessionStatusEnum.ACTIVE,
+                LocalDateTime.now()
+        );
+
+        expiredTopics.forEach(this::finishTopic);
+    }
+
+    public void finishTopic(Topic topic) {
+        topic.setSessionStatus(SessionStatusEnum.FINISHED);
+        topic.setFinishAt(LocalDateTime.now());
+        repository.save(topic);
+
+        List<Vote> votes = voteService.getAllVotesByTopicId(topic.getId());
+        if (votes == null || votes.isEmpty()) {
+            return;
+        }
+
+        Result result = calculateResult(votes, topic);
+        saveResult(result);
+    }
+
+    public Result calculateResult(List<Vote> votes, Topic topic) {
         long totalOfVotes = votes.size();
         long yesVotes = votes.stream()
                 .filter(vote -> vote.getVote() == ResponseOptionsEnum.SIM)
@@ -138,25 +174,16 @@ public class TopicService {
             decision = DecisionOfTopicEnum.WITHDRAW;
         }
 
-        return SessionResultDTO.builder()
-                .topicId(topic.getId())
-                .startedAt(topic.getStartAt())
-                .finishedAt(topic.getFinishAt())
+        return Result.builder()
+                .topic(topic)
                 .decision(decision)
+                .totalOfVotes(totalOfVotes)
                 .yesVotesPercent(yesPercent)
                 .noVotesPercent(noPercent)
-                .sessionStatus(topic.getSessionStatus())
-                .totalOfVotes(totalOfVotes)
                 .build();
     }
 
-    public void validateTopicIsFinished(Topic topic) {
-        if (topic.getSessionStatus() != SessionStatusEnum.FINISHED) {
-            throw new SessionNotFinishedException("Topic " + topic.getId().toString() + " is not finished");
-        }
-
-        if (topic.getFinishAt() == null) {
-            throw new IllegalStateException("Topic should have FinishedAt date to get result");
-        }
+    public Result saveResult(Result result) {
+        return resultRepository.save(result);
     }
 }

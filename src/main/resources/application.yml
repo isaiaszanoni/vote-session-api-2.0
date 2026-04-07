@@ -1,21 +1,24 @@
 spring:
+  application:
+      name: vote-session-api
+
   datasource:
-    url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}?allowPublicKeyRetrieval=true&useSSL=false
-    username: ${MYSQLUSER}
-    password: ${MYSQLPASSWORD}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_SCHEMA:vote_session_api}?allowPublicKeyRetrieval=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+    username: ${DB_USER:root}
+    password: ${DB_PASS:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 24000
 
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: false
     properties:
       hibernate:
+        jdbc:
+          time_zone: UTC
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 server:
-  port: ${PORT:8080}
-
-logging:
-  level:
-    com.siccase.vote_session_api: INFO
-    org.springframework.web: INFO
+  port: ${PORT:8081}
