@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -34,8 +33,8 @@ public class TopicControllerV1 {
     @Operation(summary = "Cria um novo tópico", description = "Recebe o título de um novo tópico e cria-o na base de dados")
     public ResponseEntity<ResponseDTO> createTopic(@RequestBody TopicRequestDTO topic) {
         TopicResponseDTO response = service.createTopic(topic);
-        return ResponseEntity.ok(
-                new ResponseDTO(201, "Topic created successfully", LocalDateTime.now(), response));
+
+        return ResponseEntity.status(201).body(new ResponseDTO(201, "Topic created successfully", LocalDateTime.now(), response));
     }
 
     @PostMapping("/sessions/start")

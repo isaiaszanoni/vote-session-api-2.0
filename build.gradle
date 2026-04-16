@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+    id 'jacoco'
 	id 'org.springframework.boot' version '3.5.11'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -38,9 +39,65 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation("com.h2database:h2:2.2.224")
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+}
+
+test {
+    useJUnitPlatform()
+
+    finalizedBy jacocoTestReport
+    finalizedBy jacocoTestCoverageVerification
+//    systemProperty("junit.jupiter.execution.parallel.enabled", "true")
+//    systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
+}
+
+jacoco {
+    toolVersion = "0.8.14"
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    afterEvaluate {
+        classDirectories.setFrom(
+            files(classDirectories.files.collect { fileTree(dir: it, exclude: [
+                "com/siccase/vote_session_api/dto/**",
+                "com/siccase/vote_session_api/exception/**",
+                "com/siccase/vote_session_api/mapper/**",
+                "com/siccase/vote_session_api/model/**",
+                "com/siccase/vote_session_api/enums/**",
+                "com/siccase/vote_session_api/VoteSessionApiApplication.class",
+
+            ]) })
+        )
+    }
+
+    reports {
+        html.required = true
+        xml.required = true
+        csv.required = false
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        setFailOnViolation(false)
+
+        rule {
+            enabled = true
+            element = 'CLASS'
+            includes = ['br.com.siccase.vote_session_api.*']
+
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 0.75
+            }
+        }
+    }
 }

@@ -12,5 +12,8 @@ public interface ResultMapper {
     ResultMapper INSTANCE = Mappers.getMapper( ResultMapper.class );
 
     @Mapping(source = "topic.id", target = "topicId")
+    @Mapping(source = "topic.sessionStatus", target = "sessionStatus")
+    @Mapping(source = "topic.startAt", target = "startedAt")
+    @Mapping(source = "topic.finishAt", target = "finishedAt")
     ResultResponseDTO resultToResultResponseDTO(Result result);
 }

@@ -33,6 +33,7 @@ public class Topic {
     @NotEmpty
     private String title;
 
+    @Column(name = "session_status")
     @Enumerated(EnumType.STRING)
     private SessionStatusEnum sessionStatus;
 

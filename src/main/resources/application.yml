@@ -1,6 +1,6 @@
 spring:
   application:
-      name: vote-session-api
+    name: vote-session-api
 
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_SCHEMA:vote_session_api}?allowPublicKeyRetrieval=true&useSSL=false&zeroDateTimeBehavior=convertToNull
@@ -18,7 +18,6 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
-        dialect: org.hibernate.dialect.MySQL8Dialect
 
 server:
   port: ${PORT:8081}

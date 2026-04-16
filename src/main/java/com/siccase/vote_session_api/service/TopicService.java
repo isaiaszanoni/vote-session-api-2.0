@@ -73,7 +73,7 @@ public class TopicService {
         );
     }
 
-    protected void topicCanBeStarted(Topic topic) {
+    public void topicCanBeStarted(Topic topic) {
         if (topic == null) {
             throw new IllegalArgumentException("Topic should not be null");
         }
@@ -133,7 +133,7 @@ public class TopicService {
     }
 
     public void closeExpiredTopics() {
-        List<Topic> expiredTopics = repository.findBySessionStatusAndFinishAtBefore(
+        List<Topic> expiredTopics = repository.findBySessionStatusAndFinishAtLessThanEqual(
                 SessionStatusEnum.ACTIVE,
                 LocalDateTime.now()
         );

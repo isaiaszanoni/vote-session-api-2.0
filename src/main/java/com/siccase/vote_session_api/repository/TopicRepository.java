@@ -14,5 +14,5 @@ import java.util.UUID;
 public interface TopicRepository extends JpaRepository<Topic, UUID> {
     Optional<Topic> findFirstByTitleAndSessionStatusNot(String title, SessionStatusEnum status);
 
-    List<Topic> findBySessionStatusAndFinishAtBefore(SessionStatusEnum status, LocalDateTime date);
+    List<Topic> findBySessionStatusAndFinishAtLessThanEqual(SessionStatusEnum status, LocalDateTime date);
 }

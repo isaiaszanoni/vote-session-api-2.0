@@ -34,6 +34,10 @@ public class VoteService {
             throw new MemberAlreadyVoteException();
         });
 
+        // verificar a data da votação
+        // ou somente não computar voto, se o finishedAt for no passado
+        // ou também encerrar o tópico (de maneira assincrona, para o usuário não ficar esperando).
+
         Vote vote = Vote.builder()
                 .vote(voteRequest.getVote())
                 .topicId(topic.getId())

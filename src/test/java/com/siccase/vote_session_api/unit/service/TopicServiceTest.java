@@ -1,4 +1,4 @@
-package com.siccase.vote_session_api.service;
+package com.siccase.vote_session_api.unit.service;
 
 import com.siccase.vote_session_api.dto.request.StartSessionDTO;
 import com.siccase.vote_session_api.dto.request.TopicRequestDTO;
@@ -6,6 +6,7 @@ import com.siccase.vote_session_api.enums.SessionStatusEnum;
 import com.siccase.vote_session_api.enums.TimeUnitEnum;
 import com.siccase.vote_session_api.model.Topic;
 import com.siccase.vote_session_api.repository.TopicRepository;
+import com.siccase.vote_session_api.service.TopicService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -85,9 +86,7 @@ public class TopicServiceTest {
 
     @Test
     void givenAnTopicNullShouldNotCanBeStartedByTopicCanBeStarted() {
-        Topic topic = null;
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.topicCanBeStarted(topic));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.topicCanBeStarted(null));
         assertEquals("Topic should not be null", exception.getMessage());
     }
 
@@ -108,7 +107,7 @@ public class TopicServiceTest {
                 .build();
 
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> service.topicCanBeStarted(topic));
-        assertEquals("Topic is already started", exception.getMessage());
+        assertEquals("Topic is already active. Consider to vote in this session", exception.getMessage());
     }
 
     @Test
