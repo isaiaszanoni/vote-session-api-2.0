@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 public enum DecisionOfTopicEnum {
     YES("Sim"),
     NO("Não"),
-    WITHDRAW("Empate");
+    TIE("Empate");
 
     private final String value;
 

@@ -2,10 +2,12 @@ package com.siccase.vote_session_api.controller;
 
 import com.siccase.vote_session_api.dto.request.StartSessionDTO;
 import com.siccase.vote_session_api.dto.request.TopicRequestDTO;
+import com.siccase.vote_session_api.dto.response.FinishedTopicResponseDTO;
 import com.siccase.vote_session_api.dto.response.ResponseDTO;
 import com.siccase.vote_session_api.dto.response.SessionResponseDTO;
 import com.siccase.vote_session_api.dto.response.ResultResponseDTO;
 import com.siccase.vote_session_api.dto.response.TopicResponseDTO;
+import com.siccase.vote_session_api.service.FinishTopicUseCase;
 import com.siccase.vote_session_api.service.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,9 @@ public class TopicControllerV1 {
     @Autowired
     private final TopicService service;
 
+    @Autowired
+    private final FinishTopicUseCase finishTopicUseCase;
+
     @PostMapping()
     @Operation(summary = "Cria um novo tópico", description = "Recebe o título de um novo tópico e cria-o na base de dados")
     public ResponseEntity<ResponseDTO> createTopic(@RequestBody TopicRequestDTO topic) {
@@ -51,5 +56,13 @@ public class TopicControllerV1 {
         ResultResponseDTO result = service.getSessionResultByTopicId(topicId);
         return ResponseEntity.ok(
                 new ResponseDTO(200, "Success", LocalDateTime.now(), result));
+    }
+
+    @PostMapping("/{topicId}/sessions/stop")
+    public ResponseEntity<ResponseDTO> finishTopic(@PathVariable String topicId) {
+        System.out.println("Received request to finish topic with ID: " + topicId);
+        FinishedTopicResponseDTO response = finishTopicUseCase.closeTopicById(java.util.UUID.fromString(topicId));
+        return ResponseEntity.ok(
+                new ResponseDTO(200, "Topic finished successfully", LocalDateTime.now(), response));
     }
 }

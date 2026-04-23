@@ -3,7 +3,7 @@ package com.siccase.vote_session_api.controller;
 import com.siccase.vote_session_api.dto.request.VoteRequestDTO;
 import com.siccase.vote_session_api.dto.response.ResponseDTO;
 import com.siccase.vote_session_api.dto.response.VoteResponseDTO;
-import com.siccase.vote_session_api.service.VoteService;
+import com.siccase.vote_session_api.service.RegisterVoteUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class VoteControllerV1 {
     @Autowired
-    private final VoteService service;
+    private final RegisterVoteUseCase registerVote;
 
     @PostMapping()
     @Operation(summary = "Endpoint para votar em um tópico que esteja com sessão em andamento")
     public ResponseEntity<ResponseDTO> vote(@RequestBody VoteRequestDTO voteRequest) {
-        VoteResponseDTO response = service.registerVote(voteRequest);
+        VoteResponseDTO response = registerVote.registerVote(voteRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseDTO(201, "Vote computed successfully", LocalDateTime.now(), response));
     }

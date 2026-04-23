@@ -1,7 +1,10 @@
 package com.siccase.vote_session_api.model;
 
 import com.siccase.vote_session_api.enums.DecisionOfTopicEnum;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -10,7 +13,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -26,6 +31,8 @@ public class Result {
     @OneToOne
     private Topic topic;
 
+    @Column(name = "decision")
+    @Enumerated(EnumType.STRING)
     private DecisionOfTopicEnum decision;
 
     private long totalOfVotes;
@@ -33,4 +40,8 @@ public class Result {
     private double yesVotesPercent;
 
     private double noVotesPercent;
+
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }

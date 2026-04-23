@@ -91,7 +91,7 @@ jacocoTestCoverageVerification {
         rule {
             enabled = true
             element = 'CLASS'
-            includes = ['br.com.siccase.vote_session_api.*']
+            includes = ['com.siccase.vote_session_api.*']
 
             limit {
                 counter = 'CLASS'

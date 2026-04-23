@@ -1,6 +1,8 @@
 package com.siccase.vote_session_api.model;
 
 import com.siccase.vote_session_api.enums.SessionStatusEnum;
+import com.siccase.vote_session_api.exception.SessionExpiredException;
+import com.siccase.vote_session_api.exception.SessionNotActiveException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -47,6 +49,20 @@ public class Topic {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public void ensureIsActive(LocalDateTime currentTime) {
+        if (this.sessionStatus != SessionStatusEnum.ACTIVE) {
+            throw new SessionNotActiveException("Topic session is not active");
+        }
+
+        if (this.finishAt.isBefore(currentTime)) {
+            throw new SessionExpiredException("Session has ended");
+        }
+    }
+
+    public boolean isFinished() {
+        return sessionStatus == SessionStatusEnum.FINISHED && finishAt != null;
+    }
 }
 
 
