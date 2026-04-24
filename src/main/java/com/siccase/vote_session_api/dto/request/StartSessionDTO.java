@@ -19,6 +19,8 @@ public class StartSessionDTO {
     Duration duration;
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Duration {
         @Schema(name = "timeUnit", description = "unidade de tempo (MINUTE, HOUR, DAY)", example = "HOUR")
         TimeUnitEnum timeUnit;

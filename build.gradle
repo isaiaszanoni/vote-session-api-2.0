@@ -71,6 +71,7 @@ jacocoTestReport {
                 'com/siccase/vote_session_api/mapper/**',
                 'com/siccase/vote_session_api/model/**',
                 'com/siccase/vote_session_api/enums/**',
+                'com/siccase/vote_session_api/controller/GlobalExceptionHandler.class',
                 'com/siccase/vote_session_api/utils/**',
                 'com/siccase/vote_session_api/validation/**',
                 'com/siccase/vote_session_api/VoteSessionApiApplication.class',
@@ -99,6 +100,7 @@ jacocoTestCoverageVerification {
                     'com.siccase.vote_session_api.mapper.*',
                     'com.siccase.vote_session_api.model.*',
                     'com.siccase.vote_session_api.enums.*',
+                    'com.siccase.vote_session_api.controller.GlobalExceptionHandler',
                     'com.siccase.vote_session_api.utils.*',
                     'com.siccase.vote_session_api.validation.*',
                     'com.siccase.vote_session_api.VoteSessionApiApplication'
