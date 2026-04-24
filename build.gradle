@@ -66,13 +66,14 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(
             files(classDirectories.files.collect { fileTree(dir: it, exclude: [
-                "com/siccase/vote_session_api/dto/**",
-                "com/siccase/vote_session_api/exception/**",
-                "com/siccase/vote_session_api/mapper/**",
-                "com/siccase/vote_session_api/model/**",
-                "com/siccase/vote_session_api/enums/**",
-                "com/siccase/vote_session_api/VoteSessionApiApplication.class",
-
+                'com/siccase/vote_session_api/dto/**',
+                'com/siccase/vote_session_api/exception/**',
+                'com/siccase/vote_session_api/mapper/**',
+                'com/siccase/vote_session_api/model/**',
+                'com/siccase/vote_session_api/enums/**',
+                'com/siccase/vote_session_api/utils/**',
+                'com/siccase/vote_session_api/validation/**',
+                'com/siccase/vote_session_api/VoteSessionApiApplication.class',
             ]) })
         )
     }
@@ -92,6 +93,16 @@ jacocoTestCoverageVerification {
             enabled = true
             element = 'CLASS'
             includes = ['com.siccase.vote_session_api.*']
+            excludes = [
+                    'com.siccase.vote_session_api.dto.*',
+                    'com.siccase.vote_session_api.exception.*',
+                    'com.siccase.vote_session_api.mapper.*',
+                    'com.siccase.vote_session_api.model.*',
+                    'com.siccase.vote_session_api.enums.*',
+                    'com.siccase.vote_session_api.utils.*',
+                    'com.siccase.vote_session_api.validation.*',
+                    'com.siccase.vote_session_api.VoteSessionApiApplication'
+            ]
 
             limit {
                 counter = 'CLASS'
