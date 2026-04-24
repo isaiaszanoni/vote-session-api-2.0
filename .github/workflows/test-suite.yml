@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@5
+        with:
+            distribution: 'temurin'
+            java-version: '21'
+
+      - name: Run tests
+        run: ./gradlew clean test
